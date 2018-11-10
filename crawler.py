@@ -1,31 +1,42 @@
-import time
+from csv import DictWriter
 from helpers import load_domains
 from contacts_extractor import ContactsExtractor
 from products_extractor import ProductsExtractor
 
 domains = load_domains('stores.csv')
-domain_example = 'dollardiscountclub.myshopify.com'
 
-print("--- start ---")
-start_time = time.time()
 
-for d in domains:
-    print('Domain: ',d)
+def parse_domain(d):
+    result = {'url': None, 'email': None, 'facebook': None, 'twitter': None,
+              'title 1': None, 'image 1': None, 'title 2': None, 'image 2': None,
+              'title 3': None, 'image 3': None, 'title 4': None, 'image 4': None,
+              'title 5': None, 'image 5': None}
+    result['url'] = unicode(d).encode("utf-8")
 
-    ce = ContactsExtractor(d)
-    contacts = ce.extract()
-    print(contacts)
+    contacts = ContactsExtractor(d).extract()
+    result['email'] = unicode(contacts['email']).encode("utf-8")
+    result['facebook'] = unicode(contacts['facebook']).encode("utf-8")
+    result['twitter'] = unicode(contacts['twitter']).encode("utf-8")
 
-    pe = ProductsExtractor(d)
-    products = pe.extract()
-    print(products)
+    products = ProductsExtractor(d).extract()
+    for idx, product in enumerate(products):
+        result['title '+str(idx+1)], result['image '+str(idx+1)] = unicode(products[idx]['title']).encode("utf-8"), unicode(products[idx]['image']).encode("utf-8")
 
-# ce = ContactsExtractor(domain_example)
-# contacts = ce.extract()
-# print(contacts)
+    return result
 
-# pe = ProductsExtractor(domain_example)
-# products = pe.extract()
-# print(products)
 
-print("--- %s seconds ---" % (time.time() - start_time))
+result = []
+
+for domain in domains:
+    result.append(parse_domain(domain))
+
+with open('output.csv', 'wb') as f:
+    w = DictWriter(f, ['url', 'email',
+                       'facebook', 'twitter',
+                       'title 1', 'image 1',
+                       'title 2', 'image 2',
+                       'title 3', 'image 3',
+                       'title 4', 'image 4',
+                       'title 5', 'image 5'])
+    w.writeheader()
+    w.writerows(result)

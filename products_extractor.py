@@ -2,6 +2,7 @@ import re
 from helpers import remove_arguments_from_url
 from extractor import Extractor
 
+
 class ProductsExtractor(Extractor):
     products_page_url_template = 'http://<<domain>>/collections/all'
 
@@ -18,13 +19,13 @@ class ProductsExtractor(Extractor):
     def get_links_to_products(self, number_of_products=5):
         if not self.links_to_products:
             self.parse_links_to_products(number_of_products)
-        
+
         return self.links_to_products
 
     def parse_links_to_products(self, number_of_products=5):
         soup = self.get_soup(self.products_page_url_template)
 
-        if not soup: # in cases of 'under construction' page for shop lets skip it
+        if not soup:  # in cases of 'under construction' page for shop lets skip it
             return
 
         local_links = soup.find_all('a', {'href': self.product_url_re}) + soup.find_all('a', {'href': self.product_alternative_url_re})
@@ -35,7 +36,7 @@ class ProductsExtractor(Extractor):
     def extract(self):
         if not self.products:
             self.parse_all()
-        
+
         return self.products
 
     def parse_all(self):

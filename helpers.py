@@ -1,5 +1,6 @@
 import csv
 
+
 def load_domains(file_name, ignore_header=True):
     result = []
 
@@ -12,6 +13,7 @@ def load_domains(file_name, ignore_header=True):
         result = result[1:]
 
     return result
+
 
 # make https://benoit.fashion/products/bedsm-printed-basic-blackt-shirt
 # from https://benoit.fashion/products/bedsm-printed-basic-blackt-shirt?view=quick

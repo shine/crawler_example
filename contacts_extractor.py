@@ -1,6 +1,7 @@
 import re
 from extractor import Extractor
 
+
 class ContactsExtractor(Extractor):
     sources_template = ['http://<<domain>>/',
                         'http://<<domain>>/pages/about',
@@ -25,7 +26,7 @@ class ContactsExtractor(Extractor):
     def extract(self):
         if not self.email or not self.facebook or not self.twitter:
             self.parse_all()
-            
+
         return {'email': self.email,
                 'facebook': self.facebook,
                 'twitter': self.twitter}
@@ -35,12 +36,12 @@ class ContactsExtractor(Extractor):
             soup = self.get_soup(source)
 
             if not soup:
-                continue # in cases of 'under construction' page for shop lets skip it
+                continue  # in cases of 'under construction' page for shop lets skip it
 
             self.parse_one(soup)
 
             if self.email and self.facebook and self.twitter:
-                break # we don't need to parse all pages if info was already found
+                break  # we don't need to parse all pages if info was already found
 
     def parse_one(self, soup):
         if not self.email and soup.find('a', {'href': self.email_re}):
